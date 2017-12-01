@@ -49,7 +49,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'benkilyo.urls'
+ROOT_URLCONF = 'benkyo.urls'
 
 TEMPLATES = [
     {
