@@ -59,3 +59,41 @@ class Word(BaseModel):
 
     def __str__(self):
         return self.kanji
+
+
+# class Plan(BaseModel):
+#     """
+#     记忆计划
+#     - 词组记忆
+#     - 复习
+#     - 测试
+#     """
+
+# class NormalPlan(BaseModel):
+#     total = models.IntegerField(verbose_name='选择个数')
+#     finished = models.IntegerField(verbose_name='完成个数')
+
+
+class SelectedWord(BaseModel):
+    """
+    对词记忆
+    - ranks 表达记忆程度，默认为 0，
+    - rate  表达正确率，默认 N/A，每次选择都会计算
+
+    次数统计包括每次复习中的次数。
+    复习次数只统计当次复习的第一次记忆。
+    """
+
+    class Meta:
+        ordering = ('created_at',)
+
+    ranks = models.IntegerField(default=0, verbose_name='熟悉度')
+    correct_rate = models.IntegerField(verbose_name='正确率')
+    correct_times = models.IntegerField(default=0, verbose_name='正确次数')
+    wrong_times = models.IntegerField(default=0, verbose_name='错误次数')
+    last_checked_at = models.DateTimeField(verbose_name='最后记忆时间')
+    last_wrong_at = models.DateTimeField(verbose_name='最后错误时间')
+    review_times = models.IntegerField(default=0, verbose_name='复习次数')
+    mem_level = models.IntegerField(default=0, verbose_name='记忆阶段')
+
+    origin = models.ForeignKey(Word, verbose_name='原词')
