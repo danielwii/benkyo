@@ -28,7 +28,7 @@ class Chapter(BaseModel):
 
     name = models.CharField(max_length=10, verbose_name='章节')
 
-    dictionary = models.ForeignKey(Dictionary, on_delete=models.CASCADE, verbose_name='所属字典')
+    dictionary = models.ForeignKey(Dictionary, related_name='chapters', on_delete=models.CASCADE, verbose_name='所属字典')
 
     def __str__(self):
         return "%s - %s" % (self.dictionary, self.name)
