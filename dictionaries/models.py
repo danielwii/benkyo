@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class BaseModel(models.Model):
@@ -9,6 +12,22 @@ class BaseModel(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+
+class Profile(BaseModel):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=20, verbose_name='姓名')
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.userProfile.save()
 
 
 class Dictionary(BaseModel):
@@ -73,7 +92,6 @@ class Word(BaseModel):
 #     total = models.IntegerField(verbose_name='选择个数')
 #     finished = models.IntegerField(verbose_name='完成个数')
 
-
 class SelectedWord(BaseModel):
     """
     对词记忆
@@ -97,3 +115,4 @@ class SelectedWord(BaseModel):
     mem_level = models.IntegerField(default=0, verbose_name='记忆阶段')
 
     origin = models.ForeignKey(Word, verbose_name='原词')
+    owner = models.ForeignKey(Profile, verbose_name='所属')
