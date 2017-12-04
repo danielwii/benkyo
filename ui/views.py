@@ -12,7 +12,7 @@ SIGN_IN_USERNAME = 'sign_in_username'
 
 def with_context(func):
     def __decorator(*args, **kwargs):
-        context = {'view': args[0].resolver_match.view_name}
+        context = {'view_name': args[0].resolver_match.view_name}
         return func(*args, **kwargs, context=context)
 
     return __decorator
@@ -34,6 +34,24 @@ def dictionaries(request, context=None):
         'dictionaries_with_counts': dictionaries_with_counts
     })
     return render(request, 'dictionaries/index.html', context)
+
+
+@with_context
+def chapters(request, dictionary_id, context=None):
+    chapters_with_words = models.Chapter.objects.filter(dictionary_id=dictionary_id).annotate(Sum('words'))
+    context.update({
+        'chapters_with_words': chapters_with_words
+    })
+    return render(request, 'dictionaries/chapters.html', context)
+
+
+@with_context
+def chapter_words(request, chapter_id, context=None):
+    chapter = models.Chapter.objects.get(pk=chapter_id)
+    context.update({
+        'chapter': chapter
+    })
+    return render(request, 'dictionaries/chapter.html', context)
 
 
 @with_context

@@ -1,7 +1,7 @@
 <nav class="navbar is-fixed-bottom">
   <div class="tabs is-centered is-boxed" style="width: 100%">
     <ul>
-      <li class="{% if view == 'ui:dictionaries' %}is-active{% endif %}">
+      <li class="{% if 'ui:dictionaries' in view_name %}is-active{% endif %}">
         <a href="{% url 'ui:dictionaries' %}">
           <span class="icon is-small"><i class="fa fa-book"></i></span>
           <span>Dictionaries</span>

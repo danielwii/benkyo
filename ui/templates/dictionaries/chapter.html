@@ -1,0 +1,23 @@
+{% extends 'layout/default.html' %}
+
+{% block content %}
+  <section>
+    <div class="container">
+      <nav class="breadcrumb has-bullet-separator">
+        <ul>
+          <li><a href="#">{{ chapter.dictionary }}</a></li>
+          <li class="is-active"><a href="#">{{ chapter }}</a></li>
+        </ul>
+      </nav>
+    </div>
+  </section>
+  <section class="chapters">
+    <div class="container">
+      {% for word in chapter.words.all %}
+        <span class="is-vcenterd">
+          {{ word }}
+        </span>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}
