@@ -27,7 +27,10 @@ def create_user_profile(sender, instance, created, **kwargs):
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    try:
+        instance.profile.save()
+    except Profile.DoesNotExist:
+        pass
 
 
 class Dictionary(BaseModel):
@@ -74,7 +77,7 @@ class Word(BaseModel):
     # tone 音调
     # characteristic 词性
 
-    chapter = models.ForeignKey(Chapter, verbose_name='所属章节')
+    chapter = models.ForeignKey(Chapter, related_name='words', verbose_name='所属章节')
 
     def __str__(self):
         return self.kanji

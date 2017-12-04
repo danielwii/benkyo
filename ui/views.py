@@ -1,6 +1,7 @@
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.db.models import Sum
 from django.shortcuts import render, redirect
 
 from dictionaries import models
@@ -20,7 +21,7 @@ def with_context(func):
 @with_context
 def index(request, context=None):
     # context.update({
-    #     # 'header': '您关注的行业',
+    #     # 'header': '',
     #     # 'categories': models.Category.objects.filter(published=True),
     # })
     return render(request, 'index/index.html', context)
@@ -28,8 +29,9 @@ def index(request, context=None):
 
 @with_context
 def dictionaries(request, context=None):
+    dictionaries_with_counts = models.Dictionary.objects.annotate(Sum('chapters__words'))
     context.update({
-        'dictionaries': models.Dictionary.objects.all()
+        'dictionaries_with_counts': dictionaries_with_counts
     })
     return render(request, 'dictionaries/index.html', context)
 

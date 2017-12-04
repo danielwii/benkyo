@@ -1,10 +1,17 @@
 {% extends 'layout/default.html' %}
 
+{% load model_extras %}
+
 {% block content %}
   <section class="dictionaries">
     <div class="container">
-      {% for dictionary in dictionaries %}
-        {{ dictionary.name }}
+      {% for dictionary in dictionaries_with_counts %}
+        <a class="button is-white" href="">
+          {{ dictionary.name }}
+        </a>
+        <span class="is-vcenterd">
+          (0/{{ dictionary.chapters__words__sum }})
+        </span>
       {% endfor %}
     </div>
   </section>
