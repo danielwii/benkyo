@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'bulma',
+
     'dictionaries',
     'api',
     'ui',
@@ -131,3 +132,20 @@ REST_FRAMEWORK = {
     ],
     # 'PAGE_SIZE': 10
 }
+
+# ----------------------------------------------------------------
+# DEBUG Settings
+# ----------------------------------------------------------------
+
+if DEBUG:
+    INTERNAL_IPS = ['127.0.0.1']
+    INSTALLED_APPS += ['debug_toolbar']
+    MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
+
+    # DEBUG_TOOLBAR_CONFIG = {
+    #     # Add in this line to disable the panel
+    #     'DISABLE_PANELS': {
+    #         'debug_toolbar.panels.redirects.RedirectsPanel',
+    #         'debug_toolbar.panels.templates.TemplatesPanel',
+    #     },
+    # }
