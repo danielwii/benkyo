@@ -1,0 +1,24 @@
+{% extends 'layout/default.html' %}
+
+{% load bulma_tags %}
+
+{% block content %}
+  <section class="sign-in">
+    <div class="container">
+      {% if errors %}
+        <article class="message is-danger">
+          <div class="message-body">
+            {{ errors }}
+          </div>
+        </article>
+      {% endif %}
+      <form method='post' href="{% url 'ui:sign-in' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ login_form|bulma }}
+        <div class="field">
+          <input type="submit" class="button is-primary" value="Sign In"/>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}

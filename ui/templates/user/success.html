@@ -1,0 +1,11 @@
+{% extends 'layout/default.html' %}
+
+{% block content %}
+  <section class="success">
+    <div class="container">
+      <div class="content">
+        用户 {{ current_user }} 注册成功，去<a href="{% url 'ui:sign-in' %}">登录</a>。
+      </div>
+    </div>
+  </section>
+{% endblock %}

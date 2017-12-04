@@ -1,0 +1,17 @@
+{% extends 'layout/default.html' %}
+
+{% load bulma_tags %}
+
+{% block content %}
+  <section class="sign-up">
+    <div class="container">
+      <form method='post' enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ user_form|bulma }}
+        <div class="field">
+          <input type="submit" class="button is-primary" value="Sign Up"/>
+        </div>
+      </form>
+    </div>
+  </section>
+{% endblock %}
