@@ -1,8 +1,10 @@
+import django
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.db.models import Sum
-from django.shortcuts import render, redirect
+from django.db.models import Count
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
 
 from dictionaries import models
 from ui import forms
@@ -29,7 +31,7 @@ def index(request, context=None):
 
 @with_context
 def dictionaries(request, context=None):
-    dictionaries_with_counts = models.Dictionary.objects.annotate(Sum('chapters__words'))
+    dictionaries_with_counts = models.Dictionary.objects.annotate(Count('chapters__words'))
     context.update({
         'dictionaries_with_counts': dictionaries_with_counts
     })
@@ -38,9 +40,23 @@ def dictionaries(request, context=None):
 
 @with_context
 def chapters(request, dictionary_id, context=None):
-    chapters_with_words = models.Chapter.objects.filter(dictionary_id=dictionary_id).annotate(Sum('words'))
+    chapters_words = models.Chapter.objects \
+        .filter(dictionary_id=dictionary_id) \
+        .annotate(Count('words'))
+    selected_words = models.SelectedWord.objects \
+        .filter(owner=request.user.profile) \
+        .values('origin__chapter').order_by() \
+        .annotate(Count('origin'))
+
+    chapters_with_words = []
+    for chapter in chapters_words:
+        selected = list(filter(lambda s: s['origin__chapter'] == chapter.id, selected_words))
+        if len(selected) == 1:
+            chapters_with_words.append((chapter, selected[0]))
+        else:
+            chapters_with_words.append((chapter, {'origin__chapter': chapter.id, 'origin__count': 0}))
     context.update({
-        'chapters_with_words': chapters_with_words
+        'chapters_with_words': chapters_with_words,
     })
     return render(request, 'dictionaries/chapters.html', context)
 
@@ -97,3 +113,22 @@ def sign_in(request, context=None):
 def sign_out(request):
     logout(request)
     return redirect('/')
+
+
+@with_context
+def chapter_add_words(request, chapter_id, context=None):
+    """
+    add all chapter words to current user's selected words
+    :param request:
+    :param chapter_id:
+    :return:
+    """
+    user = request.user
+    chapter = get_object_or_404(models.Chapter, pk=chapter_id)
+    for word in chapter.words.all():
+        try:
+            user.profile.selected_words.create(origin=word)
+        except django.db.utils.IntegrityError:
+            pass
+
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))

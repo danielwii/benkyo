@@ -10,6 +10,8 @@ urlpatterns = [
     url(r'^dictionaries/(?P<dictionary_id>[0-9]+)/chapters/$', views.chapters, name='dictionaries-chapters'),
     url(r'^chapters/(?P<chapter_id>[0-9]+)/$', views.chapter_words, name='dictionaries-chapters-words'),
 
+    url(r'^chapters/(?P<chapter_id>[0-9]+)/add-words$', views.chapter_add_words, name='dictionaries-chapters-add-words'),
+
     url(r'^sign-up/$', views.sign_up, name='sign-up'),
     url(r'^sign-in/$', views.sign_in, name='sign-in'),
     url(r'^sign-out/$', views.sign_out, name='sign-out'),

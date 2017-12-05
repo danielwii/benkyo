@@ -1,15 +1,22 @@
 {% extends 'layout/default.html' %}
 
+{% load model_extras %}
+
 {% block content %}
   <section class="chapters">
     <div class="container">
-      {% for chapter in chapters_with_words %}
-        <a class="button is-white" href="{% url 'ui:dictionaries-chapters-words' chapter_id=chapter.id %}">
-          {{ chapter.name }}
-        </a>
-        <span class="is-vcenterd">
-          (0/{{ chapter.words__sum }})
-        </span>
+      {% for chapter, selected in chapters_with_words %}
+        <div>
+          <a class="button is-white" href="{% url 'ui:dictionaries-chapters-words' chapter_id=chapter.id %}">
+            {{ chapter.name }}
+          </a>
+          <span class="is-vcenterd">
+            ({{ selected.origin__count }}/{{ chapter.words__count }})
+          </span>
+          {% if not chapter.words__count|eq:selected.origin__count %}
+            <a class="button is-text" href="{% url 'ui:dictionaries-chapters-add-words' chapter_id=chapter.id %}">add</a>
+          {% endif %}
+        </div>
       {% endfor %}
     </div>
   </section>

@@ -58,6 +58,11 @@ class Chapter(BaseModel):
 
 CHARACTERISTIC_CHOICES = (
     ('0', '名词'),
+    ('1', '代词'),
+    ('2', '副词'),
+    ('3', '专'),
+    ('4', '叹'),
+    ('5', '短语'),  # phrase
 )
 
 
@@ -109,13 +114,13 @@ class SelectedWord(BaseModel):
         ordering = ('created_at',)
 
     ranks = models.IntegerField(default=0, verbose_name='熟悉度')
-    correct_rate = models.IntegerField(verbose_name='正确率')
+    correct_rate = models.IntegerField(null=True, verbose_name='正确率')
     correct_times = models.IntegerField(default=0, verbose_name='正确次数')
     wrong_times = models.IntegerField(default=0, verbose_name='错误次数')
-    last_checked_at = models.DateTimeField(verbose_name='最后记忆时间')
-    last_wrong_at = models.DateTimeField(verbose_name='最后错误时间')
+    last_checked_at = models.DateTimeField(null=True, verbose_name='最后记忆时间')
+    last_wrong_at = models.DateTimeField(null=True, verbose_name='最后错误时间')
     review_times = models.IntegerField(default=0, verbose_name='复习次数')
     mem_level = models.IntegerField(default=0, verbose_name='记忆阶段')
 
-    origin = models.ForeignKey(Word, verbose_name='原词')
-    owner = models.ForeignKey(Profile, verbose_name='所属')
+    origin = models.OneToOneField(Word, primary_key=True, verbose_name='原词')
+    owner = models.ForeignKey(Profile, related_name='selected_words', verbose_name='所属')

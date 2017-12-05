@@ -5,7 +5,7 @@
     <div class="container">
       <nav class="breadcrumb has-bullet-separator">
         <ul>
-          <li><a href="#">{{ chapter.dictionary }}</a></li>
+          <li><a href="{% url 'ui:dictionaries-chapters' dictionary_id=chapter.dictionary_id %}">{{ chapter.dictionary }}</a></li>
           <li class="is-active"><a href="#">{{ chapter }}</a></li>
         </ul>
       </nav>
@@ -13,11 +13,19 @@
   </section>
   <section class="chapters">
     <div class="container">
-      {% for word in chapter.words.all %}
-        <span class="is-vcenterd">
-          {{ word }}
-        </span>
-      {% endfor %}
+      <div class="functions">
+        <button class="button">全选</button>
+      </div>
+      <form action="">
+        {% for word in chapter.words.all %}
+          <div>
+            <label class="checkbox">
+              <input name="selected_words" type="checkbox" value="{{ word.id }}">
+              {{ word }}
+            </label>
+          </div>
+        {% endfor %}
+      </form>
     </div>
   </section>
 {% endblock %}
