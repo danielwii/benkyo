@@ -57,9 +57,9 @@ class Chapter(BaseModel):
 
 
 CHARACTERISTIC_CHOICES = (
-    ('0', '名词'),
-    ('1', '代词'),
-    ('2', '副词'),
+    ('0', '名'),
+    ('1', '代'),
+    ('2', '副'),
     ('3', '专'),
     ('4', '叹'),
     ('5', '短语'),  # phrase
@@ -107,7 +107,6 @@ class SelectedWord(BaseModel):
     - rate  表达正确率，默认 N/A，每次选择都会计算
 
     次数统计包括每次复习中的次数。
-    复习次数只统计当次复习的第一次记忆。
     """
 
     class Meta:
@@ -117,9 +116,9 @@ class SelectedWord(BaseModel):
     correct_rate = models.IntegerField(null=True, verbose_name='正确率')
     correct_times = models.IntegerField(default=0, verbose_name='正确次数')
     wrong_times = models.IntegerField(default=0, verbose_name='错误次数')
+    review_times = models.IntegerField(default=0, verbose_name='复习次数')
     last_checked_at = models.DateTimeField(null=True, verbose_name='最后记忆时间')
     last_wrong_at = models.DateTimeField(null=True, verbose_name='最后错误时间')
-    review_times = models.IntegerField(default=0, verbose_name='复习次数')
     mem_level = models.IntegerField(default=0, verbose_name='记忆阶段')
 
     origin = models.OneToOneField(Word, primary_key=True, verbose_name='原词')

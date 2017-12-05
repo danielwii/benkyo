@@ -18,6 +18,10 @@
 import math
 
 
+class Ranks:
+    NOT_REMEMBER_TOTALLY = 10
+
+
 def calc_ranks(ranks: int, choice: int, first: bool = False) -> tuple:
     """
     计算所处阶段及记忆程度

@@ -14,7 +14,8 @@
             ({{ selected.origin__count }}/{{ chapter.words__count }})
           </span>
           {% if not chapter.words__count|eq:selected.origin__count %}
-            <a class="button is-text" href="{% url 'ui:dictionaries-chapters-add-words' chapter_id=chapter.id %}">add</a>
+            <a class="button is-text"
+               href="{% url 'ui:dictionaries-chapters-add-words' chapter_id=chapter.id %}">add</a>
           {% endif %}
         </div>
       {% endfor %}

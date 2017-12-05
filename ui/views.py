@@ -1,3 +1,5 @@
+from random import randint
+
 import django
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
@@ -6,6 +8,7 @@ from django.db.models import Count
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 
+from core.mem_curve import Ranks
 from dictionaries import models
 from ui import forms
 
@@ -115,8 +118,7 @@ def sign_out(request):
     return redirect('/')
 
 
-@with_context
-def chapter_add_words(request, chapter_id, context=None):
+def chapter_add_words(request, chapter_id):
     """
     add all chapter words to current user's selected words
     :param request:
@@ -132,3 +134,26 @@ def chapter_add_words(request, chapter_id, context=None):
             pass
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+@with_context
+def learn_index(request, context=None):
+    # 1. ranks < 10
+    ranks_lt_10_count = models.SelectedWord.objects \
+        .filter(owner=request.user.profile) \
+        .filter(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) \
+        .count()
+    current = models.SelectedWord.objects \
+        .filter(owner=request.user.profile) \
+        .filter(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) \
+        .all()[randint(0, ranks_lt_10_count - 1)]
+    context.update({
+        'ranks_lt_10_count': ranks_lt_10_count,
+        'current': current,
+    })
+    return render(request, 'learn/index.html', context)
+
+
+@with_context
+def learn_word(request, word_id, context=None):
+    return None
