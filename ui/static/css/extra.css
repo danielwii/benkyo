@@ -1,0 +1,11 @@
+.phonetic-words {
+}
+
+.phonetic-words .phonetic-word {
+    display: inline-block;
+}
+
+.phonetic-words .phonetic-word .kana {
+    font-size: 0.75rem;
+    font-weight: bold;
+}

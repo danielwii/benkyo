@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.utils.html import format_html
 
+from core.utils import phonetic_wrapper
 from . import models
 
 
@@ -37,4 +39,18 @@ class ChapterAdmin(admin.ModelAdmin):
 
 @admin.register(models.Word)
 class WordAdmin(admin.ModelAdmin):
-    pass
+    class Media:
+        css = {
+            'extra': ('css/extra.css',)
+        }
+
+    readonly_fields = ('phonetic_word',)
+
+    def phonetic_word(self, obj):
+        wrapper = '/'
+        try:
+            wrapper = phonetic_wrapper(obj.kana, obj.kanji, obj.marking)
+        except Exception as e:
+            print(e)
+        print(wrapper)
+        return format_html('<div class="phonetic-words">{}</div>', format_html(wrapper))

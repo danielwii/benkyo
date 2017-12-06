@@ -20,7 +20,8 @@
             <div class="card">
               <div class="card-header">
                 <div class="card-header-title is-centered">
-                  {{ current.origin.kana }}
+{#                  {{ current.origin.kana }}#}
+                {% phonetic current.origin %}
                 </div>
               </div>
               <div class="card-content">
@@ -28,7 +29,10 @@
                   <span class="tag is-dark">{% characteristic current.origin.characteristic %}</span>
                   {{ current.origin.meaning }}
                 </p>
-                <a class="button is-primary is-rounded">?</a>
+                <br>
+                <p>
+                  <a class="button is-primary is-rounded">?</a>
+                </p>
                 <hr>
                 {% if current.review_times %}
                   <div class="buttons has-addons is-centered">
