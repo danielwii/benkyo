@@ -4,12 +4,13 @@ import django
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.db.models import Count
+from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
+from django.utils import timezone
 
 from core.mem_curve import Ranks
-from dictionaries import models
+from dictionaries import models, services
 from ui import forms
 
 SIGN_IN_USERNAME = 'sign_in_username'
@@ -25,18 +26,28 @@ def with_context(func):
 
 @with_context
 def index(request, context=None):
-    # context.update({
-    #     # 'header': '',
-    #     # 'categories': models.Category.objects.filter(published=True),
-    # })
     return render(request, 'index/index.html', context)
 
 
 @with_context
 def dictionaries(request, context=None):
-    dictionaries_with_counts = models.Dictionary.objects.annotate(Count('chapters__words'))
+    dictionaries_words = models.Dictionary.objects \
+        .annotate(count=Count('chapters__words'))
+    selected_words = models.SelectedWord.objects \
+        .filter(owner=request.user.profile) \
+        .values('origin__chapter__dictionary').order_by() \
+        .annotate(count=Count('origin'))
+
+    dictionaries_with_words = []
+    for dictionary in dictionaries_words:
+        selected = list(filter(lambda s: s['origin__chapter__dictionary'] == dictionary.id, selected_words))
+        if len(selected):
+            dictionaries_with_words.append((dictionary, selected[0]))
+        else:
+            dictionaries_with_words.append((dictionary, {'origin__chapter__dictionary': dictionary.id, 'count': 0}))
+
     context.update({
-        'dictionaries_with_counts': dictionaries_with_counts
+        'dictionaries_with_words': dictionaries_with_words
     })
     return render(request, 'dictionaries/index.html', context)
 
@@ -45,11 +56,11 @@ def dictionaries(request, context=None):
 def chapters(request, dictionary_id, context=None):
     chapters_words = models.Chapter.objects \
         .filter(dictionary_id=dictionary_id) \
-        .annotate(Count('words'))
+        .annotate(count=Count('words'))
     selected_words = models.SelectedWord.objects \
         .filter(owner=request.user.profile) \
         .values('origin__chapter').order_by() \
-        .annotate(Count('origin'))
+        .annotate(count=Count('origin'))
 
     chapters_with_words = []
     for chapter in chapters_words:
@@ -57,7 +68,8 @@ def chapters(request, dictionary_id, context=None):
         if len(selected) == 1:
             chapters_with_words.append((chapter, selected[0]))
         else:
-            chapters_with_words.append((chapter, {'origin__chapter': chapter.id, 'origin__count': 0}))
+            chapters_with_words.append((chapter, {'origin__chapter': chapter.id, 'count': 0}))
+
     context.update({
         'chapters_with_words': chapters_with_words,
     })
@@ -136,23 +148,24 @@ def chapter_add_words(request, chapter_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-def ranks_lt_10_count(request):
-    return models.SelectedWord.objects \
-        .filter(owner=request.user.profile) \
-        .filter(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) \
-        .count()
+LEFT_FILTER = Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | Q(next_check_point__isnull=True) | Q(
+    next_check_point__lte=timezone.now())
+
+
+def left_words(request):
+    return models.SelectedWord.objects.filter(owner=request.user.profile).filter(LEFT_FILTER).count()
 
 
 @with_context
 def learn_index(request, context=None):
     # 1. ranks < 10
-    _ranks_lt_10_count = ranks_lt_10_count(request)
+    _left_words = left_words(request)
     current = models.SelectedWord.objects \
         .filter(owner=request.user.profile) \
-        .filter(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) \
-        .all()[randint(0, _ranks_lt_10_count - 1)]
+        .filter(LEFT_FILTER) \
+        .all()[randint(0, _left_words - 1)]
     context.update({
-        'ranks_lt_10_count': _ranks_lt_10_count,
+        'left_words': _left_words,
         'current': current,
     })
     return render(request, 'learn/index.html', context)
@@ -161,11 +174,11 @@ def learn_index(request, context=None):
 @with_context
 def learn_word_with_translation(request, selected_word_id, context=None):
     # 1. ranks < 10
-    _ranks_lt_10_count = ranks_lt_10_count(request)
+    _left_words = left_words(request)
 
     current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
     context.update({
-        'ranks_lt_10_count': _ranks_lt_10_count,
+        'left_words': _left_words,
         'current': current,
     })
     return render(request, 'learn/with-translation.html', context)
@@ -173,12 +186,19 @@ def learn_word_with_translation(request, selected_word_id, context=None):
 
 @with_context
 def learn_word(request, selected_word_id, context=None):
+    current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
     if request.POST:
-        print(request.POST)
-        _ranks_lt_10_count = ranks_lt_10_count(request)
-        current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
-        context.update({
-            'ranks_lt_10_count': _ranks_lt_10_count,
-            'current': current,
-        })
-    return render(request, 'learn/with-translation.html', context)
+        choice = request.POST['choice']
+        services.learn_word(current, int(choice))
+    return redirect('next/')
+
+
+@with_context
+def learn_next(request, selected_word_id, context=None):
+    current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
+    _left_words = left_words(request)
+    context.update({
+        'left_words': _left_words,
+        'current': current,
+    })
+    return render(request, 'learn/next.html', context)

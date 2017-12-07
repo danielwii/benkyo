@@ -17,9 +17,29 @@
 
 import math
 
+from django.utils import timezone
+
 
 class Ranks:
     NOT_REMEMBER_TOTALLY = 10
+
+
+def next_check_point(dt: timezone, level: int):
+    if dt:
+        if level is None:
+            raise ValueError('level should defined and in range [0,6]')
+        minutes = {
+            0: 5,
+            1: 30,
+            2: 9 * 60,
+            3: 2 * 24 * 60,
+            4: 4 * 24 * 60,
+            5: 7 * 24 * 60,
+            6: 15 * 24 * 60,
+        }[level]
+        return dt + timezone.timedelta(minutes=minutes)
+    else:
+        return timezone.now()
 
 
 def calc_ranks(ranks: int, choice: int, first: bool = False) -> tuple:

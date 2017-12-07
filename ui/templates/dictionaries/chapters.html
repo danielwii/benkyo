@@ -11,9 +11,9 @@
             {{ chapter.name }}
           </a>
           <span class="is-vcenterd">
-            ({{ selected.origin__count }}/{{ chapter.words__count }})
+            ({{ selected.count }}/{{ chapter.count }})
           </span>
-          {% if not chapter.words__count|eq:selected.origin__count %}
+          {% if not chapter.count|eq:selected.count %}
             <a class="button is-text"
                href="{% url 'ui:dictionaries-chapters-add-words' chapter_id=chapter.id %}">add</a>
           {% endif %}

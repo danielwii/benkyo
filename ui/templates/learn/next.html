@@ -1,0 +1,21 @@
+{% extends 'learn/index.html' %}
+
+{% load model_extras %}
+
+{% block kana %}
+  {% phonetic current.origin %}
+{% endblock %}
+
+{% block translation %}
+  <p>
+    <span class="tag is-dark">{% characteristic current.origin.characteristic %}</span>
+    {{ current.origin.meaning }}
+  </p>
+{% endblock %}
+
+{% block functions %}
+  <p>
+    <a class="button is-primary is-rounded"
+       href="{% url 'ui:learn' %}">next</a>
+  </p>
+{% endblock %}

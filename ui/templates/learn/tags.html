@@ -1,8 +1,10 @@
+{% load humanize %}
+
 <div class="field is-grouped is-grouped-multiline">
   <div class="control">
     <div class="tags has-addons">
       <span class="tag is-dark">left</span>
-      <span class="tag is-link">{{ ranks_lt_10_count }}</span>
+      <span class="tag is-link">{{ left_words }}</span>
     </div>
   </div>
   <div class="control">
@@ -17,17 +19,23 @@
   </div>
   <div class="control">
     <div class="tags has-addons">
+      <span class="tag is-dark">level</span>
+      <span class="tag is-black">{{ current.mem_level }}</span>
+    </div>
+  </div>
+  <div class="control">
+    <div class="tags has-addons">
       <span class="tag is-dark">ranks</span>
       <span class="tag is-primary">{{ current.ranks }}</span>
     </div>
   </div>
-  <div class="control">
+  <div class="control is-hidden">
     <div class="tags has-addons">
       <span class="tag is-dark">correct</span>
       <span class="tag is-info">{{ current.correct_rate }} - {{ current.correct_times }}</span>
     </div>
   </div>
-  <div class="control">
+  <div class="control is-hidden">
     <div class="tags has-addons">
       <span class="tag is-dark">wrong</span>
       <span class="tag is-warning">{{ current.wrong_times }}</span>
@@ -41,17 +49,17 @@
   </div>
   <div class="control">
     <div class="tags has-addons">
-      <span class="tag is-dark">level</span>
-      <span class="tag is-black">{{ current.mem_level }}</span>
+      <span class="tag is-dark">last checked</span>
+      <span class="tag is-white">{{ current.last_checked_at|naturaltime }}</span>
     </div>
   </div>
   <div class="control">
     <div class="tags has-addons">
-      <span class="tag is-dark">last checked</span>
-      <span class="tag is-white">{{ current.last_checked_at }}</span>
+      <span class="tag is-dark">next</span>
+      <span class="tag is-dark">{{ current.next_check_point|naturaltime }}</span>
     </div>
   </div>
-  <div class="control">
+  <div class="control is-hidden">
     <div class="tags has-addons">
       <span class="tag is-dark">last wrong</span>
       <span class="tag is-white">{{ current.last_wrong_at }}</span>
