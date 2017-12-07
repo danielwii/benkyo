@@ -41,7 +41,7 @@ class ChapterAdmin(admin.ModelAdmin):
 class WordAdmin(admin.ModelAdmin):
     class Media:
         css = {
-            'extra': ('css/extra.css',)
+            'all': ('admin/base.css',)
         }
 
     readonly_fields = ('phonetic_word',)

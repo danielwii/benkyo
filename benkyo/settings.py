@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'bulma',
+    'compressor',
 
     'dictionaries',
     'api',
@@ -118,7 +119,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/assets/'
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # ----------------------------------------------------------------
 # REST FRAMEWORK
@@ -132,6 +133,21 @@ REST_FRAMEWORK = {
     ],
     # 'PAGE_SIZE': 10
 }
+
+# ----------------------------------------------------------------
+# Compress FRAMEWORK
+# ----------------------------------------------------------------
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    # other finders..
+    'compressor.finders.CompressorFinder',
+)
+
+COMPRESS_PRECOMPILERS = (
+    ('text/x-scss', 'django_libsass.SassCompiler'),
+)
 
 # ----------------------------------------------------------------
 # DEBUG Settings

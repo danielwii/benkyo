@@ -2,6 +2,7 @@
 }
 
 .phonetic-words .phonetic-word {
+    text-align: center;
     display: inline-block;
 }
 
