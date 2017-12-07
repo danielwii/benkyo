@@ -136,24 +136,49 @@ def chapter_add_words(request, chapter_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@with_context
-def learn_index(request, context=None):
-    # 1. ranks < 10
-    ranks_lt_10_count = models.SelectedWord.objects \
+def ranks_lt_10_count(request):
+    return models.SelectedWord.objects \
         .filter(owner=request.user.profile) \
         .filter(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) \
         .count()
+
+
+@with_context
+def learn_index(request, context=None):
+    # 1. ranks < 10
+    _ranks_lt_10_count = ranks_lt_10_count(request)
     current = models.SelectedWord.objects \
         .filter(owner=request.user.profile) \
         .filter(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) \
-        .all()[randint(0, ranks_lt_10_count - 1)]
+        .all()[randint(0, _ranks_lt_10_count - 1)]
     context.update({
-        'ranks_lt_10_count': ranks_lt_10_count,
+        'ranks_lt_10_count': _ranks_lt_10_count,
         'current': current,
     })
     return render(request, 'learn/index.html', context)
 
 
 @with_context
-def learn_word(request, word_id, context=None):
-    return None
+def learn_word_with_translation(request, selected_word_id, context=None):
+    # 1. ranks < 10
+    _ranks_lt_10_count = ranks_lt_10_count(request)
+
+    current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
+    context.update({
+        'ranks_lt_10_count': _ranks_lt_10_count,
+        'current': current,
+    })
+    return render(request, 'learn/with-translation.html', context)
+
+
+@with_context
+def learn_word(request, selected_word_id, context=None):
+    if request.POST:
+        print(request.POST)
+        _ranks_lt_10_count = ranks_lt_10_count(request)
+        current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
+        context.update({
+            'ranks_lt_10_count': _ranks_lt_10_count,
+            'current': current,
+        })
+    return render(request, 'learn/with-translation.html', context)

@@ -6,54 +6,53 @@
   <section class="dictionaries">
     <div class="container">
       <div style="text-align: center">
-        <div>
-          <div class="control">
-            <div class="tags has-addons">
-              <span class="tag is-dark">left</span>
-              <span class="tag is-info">{{ ranks_lt_10_count }}</span>
-            </div>
-          </div>
-        </div>
-        {#        <form action="{% url 'ui:learn-word' word_id=current.id %}"></form>#}
+        {% include 'learn/tags.html' %}
         <div class="columns">
           <div class="column is-half is-offset-one-quarter">
             <div class="card">
               <div class="card-header">
                 <div class="card-header-title is-centered">
-{#                  {{ current.origin.kana }}#}
-                {% phonetic current.origin %}
+                  {% block kana %}
+                    {{ current.origin.kana }}
+                  {% endblock %}
                 </div>
               </div>
               <div class="card-content">
-                <p>
-                  <span class="tag is-dark">{% characteristic current.origin.characteristic %}</span>
-                  {{ current.origin.meaning }}
-                </p>
+                {% block translation %}
+                  <p>
+                    {{ current.id }}
+                    <a class="button is-primary is-rounded"
+                       href="{% url 'ui:learn-word-with-translation' selected_word_id=current.origin_id %}">?</a>
+                  </p>
+                {% endblock %}
                 <br>
-                <p>
-                  <a class="button is-primary is-rounded">?</a>
-                </p>
                 <hr>
-                {% if current.review_times %}
-                  <div class="buttons has-addons is-centered">
-                    <a href="" class="button">不记得</a>
-                    <a href="" class="button">模糊</a>
-                    <a href="" class="button">记得</a>
-                  </div>
-                {% else %}
-                  <div class="buttons has-addons is-centered">
-                    <a href="" class="button">完全不认识</a>
-                    <a href="" class="button">不记得</a>
-                    <a href="" class="button">模糊</a>
-                    <a href="" class="button">记得</a>
-                    <a href="" class="button">熟悉</a>
-                  </div>
-                {% endif %}
-                <div class="tags">
-                  {% if not current.review_times %}
-                    <span class="tag is-success">First</span>
-                  {% endif %}
+                <div>
+                  <form action="{% url 'ui:learn-word' selected_word_id=current.origin_id %}" method="post">
+                    {% csrf_token %}
+                    {% if current.review_times %}
+                      <div class="buttons has-addons is-centered">
+                        <button type="submit" name="choice" value="1" class="button">不记得</button>
+                        <button type="submit" name="choice" value="2" class="button">模糊</button>
+                        <button type="submit" name="choice" value="3" class="button">记得</button>
+                      </div>
+                    {% else %}
+                      <div class="buttons has-addons is-centered">
+                        <button type="submit" name="choice" value="0" class="button">完全不认识</button>
+                        <button type="submit" name="choice" value="1" class="button">不记得</button>
+                        <button type="submit" name="choice" value="2" class="button">模糊</button>
+                        <button type="submit" name="choice" value="3" class="button">记得</button>
+                        <button type="submit" name="choice" value="4" class="button">熟悉</button>
+                      </div>
+                    {% endif %}
+                  </form>
                 </div>
+                {#                <br>#}
+                {#                <div class="tags">#}
+                {#                  {% if not current.review_times %}#}
+                {#                    <span class="tag is-success">First</span>#}
+                {#                  {% endif %}#}
+                {#                </div>#}
               </div>
             </div>
           </div>
