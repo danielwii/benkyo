@@ -9,7 +9,7 @@
         <a class="button is-white" href="{% url 'ui:dictionaries-chapters' dictionary_id=dictionary.id %}">
           {{ dictionary.name }}
         </a>
-        <span class="is-vcenterd">
+        <span class="is-vcentered">
           ({{ selected.count }}/{{ dictionary.count }})
         </span>
       {% endfor %}

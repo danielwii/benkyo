@@ -148,22 +148,20 @@ def chapter_add_words(request, chapter_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-LEFT_FILTER = Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | Q(next_check_point__isnull=True) | Q(
-    next_check_point__lte=timezone.now())
+LEFT_FILTER = Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | \
+              Q(next_check_point__isnull=True) | \
+              Q(next_check_point__lte=timezone.now())
 
 
 def left_words(request):
-    return models.SelectedWord.objects.filter(owner=request.user.profile).filter(LEFT_FILTER).count()
+    return models.SelectedWord.objects.filter(owner=request.user.profile).filter(LEFT_FILTER)
 
 
 @with_context
 def learn_index(request, context=None):
     # 1. ranks < 10
-    _left_words = left_words(request)
-    current = models.SelectedWord.objects \
-        .filter(owner=request.user.profile) \
-        .filter(LEFT_FILTER) \
-        .all()[randint(0, _left_words - 1)]
+    _left_words = left_words(request).count()
+    current = left_words(request).all()[randint(0, _left_words - 1)]
     context.update({
         'left_words': _left_words,
         'current': current,
@@ -174,8 +172,7 @@ def learn_index(request, context=None):
 @with_context
 def learn_word_with_translation(request, selected_word_id, context=None):
     # 1. ranks < 10
-    _left_words = left_words(request)
-
+    _left_words = left_words(request).count()
     current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
     context.update({
         'left_words': _left_words,
@@ -195,8 +192,8 @@ def learn_word(request, selected_word_id, context=None):
 
 @with_context
 def learn_next(request, selected_word_id, context=None):
+    _left_words = left_words(request).count()
     current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
-    _left_words = left_words(request)
     context.update({
         'left_words': _left_words,
         'current': current,

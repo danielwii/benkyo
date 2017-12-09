@@ -50,10 +50,10 @@ def calc_ranks(ranks: int, choice: int, first: bool = False) -> tuple:
     :param choice:
         选择 = 阶段:记忆程度(符号表示需要计算)
         -> 0 = 0:  0 FIRST            完全不认识
-        -> 1 = _: -5           ALWAYS 不记得
+        -> 1 = _: -5 FIRST(10) ALWAYS 不记得
         -> 2 = 2:  0 FIRST(40) ALWAYS 模糊
-        -> 3 = _: +5           ALWAYS 记得
-        -> 4 = 3: 50 FIRST            熟悉
+        -> 3 = _: +5 FIRST(50) ALWAYS 记得
+        -> 4 = 3: 60 FIRST            熟悉
     :param first:
         是否是第一次
     :return:
@@ -62,8 +62,8 @@ def calc_ranks(ranks: int, choice: int, first: bool = False) -> tuple:
     if choice not in (0, 1, 2, 3, 4):
         raise ValueError("choice must be in 0,1,2,3,4")
 
-    if first and choice not in (0, 2, 4):
-        raise ValueError("choice must be in 0,2,4 while it's the first")
+    # if first and choice not in (0, 2, 4):
+    #     raise ValueError("choice must be in 0,2,4 while it's the first")
 
     if not first and choice not in (1, 2, 3):
         raise ValueError("choice must be in 1,2,3 while not the first")
@@ -71,8 +71,10 @@ def calc_ranks(ranks: int, choice: int, first: bool = False) -> tuple:
     if first:
         _ranks = {
             0: lambda x: 0,
+            1: lambda x: 10,
             2: lambda x: 40,
-            4: lambda x: 50,
+            3: lambda x: 50,
+            4: lambda x: 60,
         }[choice](ranks)
     else:
         _ranks = {

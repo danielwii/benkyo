@@ -4,16 +4,27 @@
 def phonetic_wrapper(kana, kanji, marking):
     parts = marking.split(';')
 
-    wrapped = kanji
-    for index, part in enumerate(parts):
-        to_kanji, from_kana = part.split(':')
+    if not kanji:
+        wrapped = '<div class="phonetic-word">' \
+                  '<div class="kana">%s</div>' % kana + \
+                  '</div>'
+    elif not marking:
+        wrapped = '<div class="phonetic-word">' \
+                  '<div class="kana">%s</div>' % kana + \
+                  '<div class="kanji">%s</div>' % kanji + \
+                  '</div>'
+    else:
+        wrapped = kanji
+        for index, part in enumerate(parts):
+            to_kanji, from_kana = part.split(':')
 
-        replaced_by = extract_by_pos(kana, from_kana)
-        html_snippet = '<div class="phonetic-word">' \
-                       '<div class="kana">%s</div>' % replaced_by + \
-                       '<div class="kanji">%s</div>' \
-                       '</div>'
-        wrapped = wrap_word2(wrapped, len(kanji), to_kanji, html_snippet)
+            replaced_by = extract_by_pos(kana, from_kana)
+            html_snippet = '<div class="phonetic-word">' \
+                           '<div class="kana">%s</div>' % replaced_by + \
+                           '<div class="kanji">%s</div>' \
+                           '</div>'
+            wrapped = wrap_word2(wrapped, len(kanji), to_kanji, html_snippet)
+
     return wrapped
 
 
