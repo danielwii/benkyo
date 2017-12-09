@@ -155,6 +155,10 @@ COMPRESS_PRECOMPILERS = (
 # ----------------------------------------------------------------
 
 if DEBUG:
+    # ----------------------------------------------------------------
+    # DebugTool Settings
+    # ----------------------------------------------------------------
+
     INTERNAL_IPS = ['127.0.0.1']
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
@@ -166,3 +170,9 @@ if DEBUG:
     #         'debug_toolbar.panels.templates.TemplatesPanel',
     #     },
     # }
+
+    # ----------------------------------------------------------------
+    # Extensions Settings
+    # ----------------------------------------------------------------
+
+    INSTALLED_APPS += ['django_extensions']

@@ -76,7 +76,7 @@ class Word(BaseModel):
         ordering = ('created_at',)
 
     kana = models.CharField(max_length=30, verbose_name='假名')
-    kanji = models.CharField(max_length=30, verbose_name='汉字')
+    kanji = models.CharField(max_length=30, blank=True, verbose_name='汉字')
     marking = models.CharField(max_length=100, blank=True, verbose_name='假名标注')
     characteristic = models.CharField(
         max_length=1,
