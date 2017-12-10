@@ -4,7 +4,7 @@ set -ex
 
 echo '[x] update assets...'
 
-if type yarn; then
+if type yarn 2>/dev/null; then
 	yarn
 fi
 rm -rf ui/static/libs ui/static/fonts
