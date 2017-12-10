@@ -28,7 +28,14 @@ def extract_characteristic(string: str = None) -> tuple:
         return dict(CHARACTERISTIC_CHOICES).popitem()
 
 
-def insert_word(file: str, kana: str, kanji: str, characteristic: str, meaning: str):
+def chapter_filter_by_filename(file):
+    dictionary_id, chapter_num = re.search(r'(.*)-(.*)\..*', file).groups()
+    logger.info('Dictionary ID is [%s], chapter number is [%s]', dictionary_id, chapter_num)
+    return dictionary_id, chapter_num, models.Chapter.objects.filter(dictionary_id=dictionary_id,
+                                                                     name__endswith=' %s' % chapter_num)
+
+
+def insert_word(file: str, kana: str, kanji: str, characteristic: str, meaning: str) -> models.Word:
     if not kanji:
         kanji = ''
 
@@ -44,26 +51,36 @@ def insert_word(file: str, kana: str, kanji: str, characteristic: str, meaning: 
     elif word_filter.count() > 1:
         word_filter = word_filter.filter(kanji=kanji)
 
+    marking = ''
+    if '/' in kanji:
+        kanji, marking = kanji.split('/')
+
     if word_filter.exists():
         word = word_filter.get()
-        logger.info('Update kana=%s, kanji=%s, characteristic=%s, meaning=%s', kana, kanji, characteristic, meaning)
+        logger.info('Update kana=%s, kanji=%s, marking=%s, characteristic=%s, meaning=%s',
+                    kana, kanji, marking, characteristic, meaning)
         word.characteristic = characteristic
+        word.marking = marking
         word.meaning = meaning
         word.save()
     else:
-        dictionary_id, chapter_num = re.search(r'(.*)-(.*)\..*', file).groups()
-        logger.info('Dictionary ID is [%s], chapter number is [%s]', dictionary_id, chapter_num)
-        logger.info('Insert kana=%s, kanji=%s, characteristic=%s, meaning=%s', kana, kanji, characteristic, meaning)
+        dictionary_id, chapter_num, chapter_filter = chapter_filter_by_filename(file)
+        # dictionary_id, chapter_num = re.search(r'(.*)-(.*)\..*', file).groups()
+        # logger.info('Dictionary ID is [%s], chapter number is [%s]', dictionary_id, chapter_num)
+        logger.info('Insert kana=%s, kanji=%s, marking=%s, characteristic=%s, meaning=%s',
+                    kana, kanji, marking, characteristic, meaning)
 
-        _filter = models.Chapter.objects.filter(dictionary_id=dictionary_id, name__endswith=' %s' % chapter_num)
-        if _filter.exists():
-            chapter = _filter.get()
+        # _filter = models.Chapter.objects.filter(dictionary_id=dictionary_id, name__endswith=' %s' % chapter_num)
+        if chapter_filter.exists():
+            chapter = chapter_filter.get()
             logger.info('Chapter [%s] already exists.', chapter)
-            models.Word.objects.create(
-                chapter=chapter, kana=kana, kanji=kanji, characteristic=characteristic, meaning=meaning)
+            word = models.Word.objects.create(
+                chapter=chapter, kana=kana, kanji=kanji, marking=marking, characteristic=characteristic,
+                meaning=meaning)
             logger.info('Created!')
         else:
             raise RuntimeError('Chapter [%s-%s] not exist, init it first...' % (dictionary_id, chapter_num))
+    return word
 
 
 def init_chapters(dictionary_json):
@@ -100,13 +117,33 @@ def init_dictionaries():
         logger.info('Init dictionaries done.')
 
 
-def load_chapters():
+def clean_chapter(file, loaded_words):
+    _, _, chapter_filter = chapter_filter_by_filename(file)
+    for word_in_db in chapter_filter.get().words.values('id', 'kana', 'kanji', 'meaning').all():
+        # logger.info('word in db is %s', word_in_db)
+        exists = len(list(filter(
+            lambda word: word.kana == word_in_db['kana'] and
+                         word.kanji == word_in_db['kanji'] and
+                         word.meaning == word_in_db['meaning'],
+            loaded_words))) > 0
+        if not exists:
+            logger.warn('remove %s - %s - %s - %s',
+                        word_in_db['id'], word_in_db['kana'], word_in_db['kanji'], word_in_db['meaning'])
+            models.Word.objects.get(pk=word_in_db['id']).delete()
+
+
+def load_chapters(chapter_file: str = None):
     search_path = path.join(BASE_DIR, 'data/chapters')
 
     logger.info('Searching... %s', search_path)
 
     all_files = [f for f in listdir(search_path) if isfile(join(search_path, f))]
     logger.info('Files: %s', all_files)
+
+    if chapter_file:
+        all_files = [f for f in all_files if f == '%s.txt' % chapter_file]
+
+    loaded_words = []
 
     for file in all_files:
         logger.info('Try to load file: %s', file)
@@ -134,13 +171,18 @@ def load_chapters():
 
                 logger.info('characteristic is [%s]', characteristic)
                 logger.info('meaning is [%s]', meaning)
-                insert_word(file, kana, kanji, characteristic[0], meaning)
+                loaded_words.append(insert_word(file, kana, kanji, characteristic[0], meaning))
                 logger.info('----------------------------------------------------')
+
+        clean_chapter(file, loaded_words)
 
 
 class Command(BaseCommand):
     help = "Load all chapters. Ignore exist words."
 
+    def add_arguments(self, parser):
+        parser.add_argument('--chapter', dest='chapter_file', help='load specified chapter file')
+
     def handle(self, *args, **options):
         init_dictionaries()
-        load_chapters()
+        load_chapters(options['chapter_file'])

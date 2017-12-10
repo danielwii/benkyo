@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from logzero import logger
 
 
 def phonetic_wrapper(kana, kanji, marking):
@@ -38,7 +39,11 @@ def extract_by_pos(words, pos):
     """
     if '-' in pos:
         start, end = pos.split('-')
-        return words[int(start): int(end) + 1]
+        logger.info('extract_by_pos start: %s, end: %s', start, end)
+        if end:
+            return words[int(start): int(end) + 1]
+        else:
+            return words[int(start):]
     else:
         return words[int(pos)]
 
@@ -55,7 +60,7 @@ def wrap_word2(need_wrapped, origin_length, pos, to):
     """
     if '-' in pos:
         start, end = pos.split('-')
-        print(start, end)
+        logger.info('wrap_word2 start: %s, end: %s', start, end)
         return wrap_word(need_wrapped, origin_length, int(start), int(end) - int(start), to)
     else:
         return wrap_word(need_wrapped, origin_length, int(pos), 1, to)
