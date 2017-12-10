@@ -36,7 +36,7 @@ LEFT_FILTER = Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | \
 
 
 def left_words(request):
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         return models.SelectedWord.objects.filter(owner=request.user.profile).filter(LEFT_FILTER)
 
 

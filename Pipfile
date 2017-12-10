@@ -13,9 +13,11 @@ django-extensions = "*"
 
 [packages]
 
-django = "==1.11.7"
 djangorestframework = "*"
 django-bulma = "*"
 django-compressor = "*"
 django-libsass = "*"
 logzero = "*"
+django-environ = "*"
+mysqlclient = "*"
+django = "*"

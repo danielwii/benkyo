@@ -3,6 +3,7 @@ from django.conf.urls import url
 
 from . import views
 
+app_name = 'api'
 urlpatterns = [
     url(r'^$', views.api_root),
     url(r'^dictionaries/$', views.DictionaryListView.as_view(), name='dictionary-list'),

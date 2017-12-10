@@ -82,7 +82,7 @@ class Word(BaseModel):
     kanji = models.CharField(max_length=30, blank=True, verbose_name='汉字')
     marking = models.CharField(max_length=100, blank=True, verbose_name='假名标注')
     characteristic = models.CharField(
-        max_length=1,
+        max_length=2,
         choices=CHARACTERISTIC_CHOICES,
         verbose_name='词性'
     )
@@ -90,7 +90,7 @@ class Word(BaseModel):
     # tone 音调
     # characteristic 词性
 
-    chapter = models.ForeignKey(Chapter, related_name='words', verbose_name='所属章节')
+    chapter = models.ForeignKey(Chapter, related_name='words', on_delete=models.CASCADE, verbose_name='所属章节')
 
     def __str__(self):
         return self.kanji
@@ -130,5 +130,5 @@ class SelectedWord(BaseModel):
     last_wrong_at = models.DateTimeField(null=True, verbose_name='最后错误时间')
     mem_level = models.IntegerField(default=0, verbose_name='记忆阶段')
 
-    origin = models.OneToOneField(Word, primary_key=True, verbose_name='原词')
-    owner = models.ForeignKey(Profile, related_name='selected_words', verbose_name='所属')
+    origin = models.OneToOneField(Word, primary_key=True, on_delete=models.CASCADE, verbose_name='原词')
+    owner = models.ForeignKey(Profile, related_name='selected_words', on_delete=models.CASCADE, verbose_name='所属')
