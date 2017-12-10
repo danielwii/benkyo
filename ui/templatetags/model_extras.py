@@ -15,12 +15,16 @@ def count(var, **kwargs):
 
 @register.simple_tag
 def characteristic(var):
-    return models.CHARACTERISTIC_CHOICES.__getitem__(int(var))[1]
+    if var == '99':
+        return dict(models.CHARACTERISTIC_CHOICES).popitem()[1]
+    else:
+        return models.CHARACTERISTIC_CHOICES.__getitem__(int(var))[1]
 
 
 @register.filter
 def eq(var1, var2):
     return var1 == var2
+
 
 @register.simple_tag
 def phonetic(model):

@@ -10,7 +10,7 @@
           <a class="button is-white" href="{% url 'ui:dictionaries-chapters-words' chapter_id=chapter.id %}">
             {{ chapter.name }}
           </a>
-          <span class="is-vcenterd">
+          <span class="is-vcentered">
             ({{ selected.count }}/{{ chapter.count }})
           </span>
           {% if not chapter.count|eq:selected.count %}

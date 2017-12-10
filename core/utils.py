@@ -6,7 +6,7 @@ def phonetic_wrapper(kana, kanji, marking):
 
     if not kanji:
         wrapped = '<div class="phonetic-word">' \
-                  '<div class="kana">%s</div>' % kana + \
+                  '<div class="kana-only">%s</div>' % kana + \
                   '</div>'
     elif not marking:
         wrapped = '<div class="phonetic-word">' \

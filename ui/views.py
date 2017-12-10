@@ -14,14 +14,27 @@ from dictionaries import models, services
 from ui import forms
 
 SIGN_IN_USERNAME = 'sign_in_username'
+LEFT_WORDS = 'left_words'
 
 
 def with_context(func):
     def __decorator(*args, **kwargs):
-        context = {'view_name': args[0].resolver_match.view_name}
+        context = {
+            'view_name': args[0].resolver_match.view_name,
+            'left_words': left_words(args[0]).count(),
+        }
         return func(*args, **kwargs, context=context)
 
     return __decorator
+
+
+LEFT_FILTER = Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | \
+              Q(next_check_point__isnull=True) | \
+              Q(next_check_point__lte=timezone.now())
+
+
+def left_words(request):
+    return models.SelectedWord.objects.filter(owner=request.user.profile).filter(LEFT_FILTER)
 
 
 @with_context
@@ -148,22 +161,13 @@ def chapter_add_words(request, chapter_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-LEFT_FILTER = Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | \
-              Q(next_check_point__isnull=True) | \
-              Q(next_check_point__lte=timezone.now())
-
-
-def left_words(request):
-    return models.SelectedWord.objects.filter(owner=request.user.profile).filter(LEFT_FILTER)
-
-
 @with_context
 def learn_index(request, context=None):
     # 1. ranks < 10
-    _left_words = left_words(request).count()
-    current = left_words(request).all()[randint(0, _left_words - 1)]
+    # _left_words = left_words(request).count()
+    current = left_words(request).all()[randint(0, context[LEFT_WORDS] - 1)]
     context.update({
-        'left_words': _left_words,
+        # 'left_words': _left_words,
         'current': current,
     })
     return render(request, 'learn/index.html', context)
@@ -172,10 +176,10 @@ def learn_index(request, context=None):
 @with_context
 def learn_word_with_translation(request, selected_word_id, context=None):
     # 1. ranks < 10
-    _left_words = left_words(request).count()
+    # _left_words = left_words(request).count()
     current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
     context.update({
-        'left_words': _left_words,
+        # 'left_words': _left_words,
         'current': current,
     })
     return render(request, 'learn/with-translation.html', context)
@@ -192,10 +196,10 @@ def learn_word(request, selected_word_id, context=None):
 
 @with_context
 def learn_next(request, selected_word_id, context=None):
-    _left_words = left_words(request).count()
+    # _left_words = left_words(request).count()
     current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
     context.update({
-        'left_words': _left_words,
+        # 'left_words': _left_words,
         'current': current,
     })
     return render(request, 'learn/next.html', context)

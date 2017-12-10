@@ -5,7 +5,11 @@
     <div class="container">
       <nav class="breadcrumb has-bullet-separator">
         <ul>
-          <li><a href="{% url 'ui:dictionaries-chapters' dictionary_id=chapter.dictionary_id %}">{{ chapter.dictionary }}</a></li>
+          <li>
+            <a href="{% url 'ui:dictionaries-chapters' dictionary_id=chapter.dictionary_id %}">
+              {{ chapter.dictionary }}
+            </a>
+          </li>
           <li class="is-active"><a href="#">{{ chapter }}</a></li>
         </ul>
       </nav>

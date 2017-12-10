@@ -13,7 +13,13 @@
               <div class="card-header">
                 <div class="card-header-title is-centered">
                   {% block kana %}
-                    {{ current.origin.kana }}
+                    {% with current.origin as word %}
+                      {% if word.kanji %}
+                        {{ word.kanji }}
+                      {% else %}
+                        {{ word.kana }}
+                      {% endif %}
+                    {% endwith %}
                   {% endblock %}
                 </div>
               </div>
