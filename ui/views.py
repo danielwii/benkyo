@@ -2,6 +2,7 @@ from random import randint
 
 import django
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.db.models import Count, Q
@@ -17,11 +18,12 @@ SIGN_IN_USERNAME = 'sign_in_username'
 LEFT_WORDS = 'left_words'
 
 
-def with_context(func):
+def with_logged_context(func):
+    @login_required(login_url='/sign-in')
     def __decorator(*args, **kwargs):
         context = {
             'view_name': args[0].resolver_match.view_name,
-            'left_words': left_words(args[0]).count(),
+            'left_words': left_words(args[0]).count() if left_words(args[0]) else 0,
         }
         return func(*args, **kwargs, context=context)
 
@@ -34,15 +36,16 @@ LEFT_FILTER = Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | \
 
 
 def left_words(request):
-    return models.SelectedWord.objects.filter(owner=request.user.profile).filter(LEFT_FILTER)
+    if request.user.is_authenticated():
+        return models.SelectedWord.objects.filter(owner=request.user.profile).filter(LEFT_FILTER)
 
 
-@with_context
+@with_logged_context
 def index(request, context=None):
     return render(request, 'index/index.html', context)
 
 
-@with_context
+@with_logged_context
 def dictionaries(request, context=None):
     dictionaries_words = models.Dictionary.objects \
         .annotate(count=Count('chapters__words'))
@@ -65,7 +68,7 @@ def dictionaries(request, context=None):
     return render(request, 'dictionaries/index.html', context)
 
 
-@with_context
+@with_logged_context
 def chapters(request, dictionary_id, context=None):
     chapters_words = models.Chapter.objects \
         .filter(dictionary_id=dictionary_id) \
@@ -89,7 +92,7 @@ def chapters(request, dictionary_id, context=None):
     return render(request, 'dictionaries/chapters.html', context)
 
 
-@with_context
+@with_logged_context
 def chapter_words(request, chapter_id, context=None):
     chapter = models.Chapter.objects.get(pk=chapter_id)
     context.update({
@@ -98,8 +101,8 @@ def chapter_words(request, chapter_id, context=None):
     return render(request, 'dictionaries/chapter.html', context)
 
 
-@with_context
-def sign_up(request, context=None):
+def sign_up(request):
+    context = {}
     if request.method == 'POST':
         user_form = UserCreationForm(request.POST)
         if user_form.is_valid():
@@ -116,8 +119,8 @@ def sign_up(request, context=None):
     return render(request, 'user/sign_up.html', context)
 
 
-@with_context
-def sign_in(request, context=None):
+def sign_in(request):
+    context = {}
     if request.POST:
         login_form = forms.UserLoginForm(request.POST)
         username = login_form.data['username']
@@ -143,7 +146,8 @@ def sign_out(request):
     return redirect('/')
 
 
-def chapter_add_words(request, chapter_id):
+@with_logged_context
+def chapter_add_words(request, chapter_id, context=None):
     """
     add all chapter words to current user's selected words
     :param request:
@@ -161,7 +165,7 @@ def chapter_add_words(request, chapter_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@with_context
+@with_logged_context
 def learn_index(request, context=None):
     # 1. ranks < 10
     # _left_words = left_words(request).count()
@@ -173,7 +177,7 @@ def learn_index(request, context=None):
     return render(request, 'learn/index.html', context)
 
 
-@with_context
+@with_logged_context
 def learn_word_with_translation(request, selected_word_id, context=None):
     # 1. ranks < 10
     # _left_words = left_words(request).count()
@@ -185,7 +189,7 @@ def learn_word_with_translation(request, selected_word_id, context=None):
     return render(request, 'learn/with-translation.html', context)
 
 
-@with_context
+@with_logged_context
 def learn_word(request, selected_word_id, context=None):
     current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
     if request.POST:
@@ -194,7 +198,7 @@ def learn_word(request, selected_word_id, context=None):
     return redirect('next/')
 
 
-@with_context
+@with_logged_context
 def learn_next(request, selected_word_id, context=None):
     # _left_words = left_words(request).count()
     current = get_object_or_404(models.SelectedWord, pk=selected_word_id)

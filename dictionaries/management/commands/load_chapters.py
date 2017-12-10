@@ -35,7 +35,14 @@ def insert_word(file: str, kana: str, kanji: str, characteristic: str, meaning: 
     if not kanji and not meaning:
         logger.warn('No meaning for %s' % kana)
 
-    word_filter = models.Word.objects.filter(kana=kana, kanji=kanji)
+    word_filter = models.Word.objects.filter(kana=kana)
+
+    # Words may have same kana and different kanji,
+    # so check the meaning but not kanji when the kanji has '~' included
+    if '～' in kanji:
+        word_filter = word_filter.filter(meaning=meaning)
+    elif word_filter.count() > 1:
+        word_filter = word_filter.filter(kanji=kanji)
 
     if word_filter.exists():
         word = word_filter.get()
@@ -83,7 +90,7 @@ def init_dictionaries():
             dictionary_filter = models.Dictionary.objects.filter(pk=dictionary_json_id_, name=dictionary_json_name_)
             if not dictionary_filter.exists():
                 # logger.info('Dictionary [%s] already exists, setup chapters...', dictionary_json_name_)
-            # else:
+                # else:
                 logger.info('Dictionary [%s] not exist, create one...', dictionary_json_name_)
                 models.Dictionary.objects.create(id=dictionary_json_id_, name=dictionary_json_name_)
 
@@ -124,7 +131,6 @@ def load_chapters():
                 else:
                     logger.warn('~no such mode handler~ %s, skip...', parts)
                     # raise RuntimeError('format not recognised: %s' % parts)
-
 
                 logger.info('characteristic is [%s]', characteristic)
                 logger.info('meaning is [%s]', meaning)

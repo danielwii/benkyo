@@ -1,5 +1,7 @@
 {% extends 'layout/default.html' %}
 
+{% load model_extras %}
+
 {% block content %}
   <section>
     <div class="container">
@@ -17,18 +19,20 @@
   </section>
   <section class="chapters">
     <div class="container">
-      <div class="functions">
+      <div class="functions is-hidden">
         <button class="button">全选</button>
       </div>
       <form action="">
-        {% for word in chapter.words.all %}
-          <div>
-            <label class="checkbox">
-              <input name="selected_words" type="checkbox" value="{{ word.id }}">
-              {{ word }}
-            </label>
-          </div>
-        {% endfor %}
+        <div class="panel">
+          {% for word in chapter.words.all %}
+            <div class="panel-block">
+              <label class="checkbox">
+                <input class="is-hidden" name="selected_words" type="checkbox" value="{{ word.id }}">
+                {% phonetic word %}
+              </label>
+            </div>
+          {% endfor %}
+        </div>
       </form>
     </div>
   </section>
