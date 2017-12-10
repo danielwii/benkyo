@@ -1,7 +1,12 @@
 #!/bin/bash
-echo '[x] update assets...'
-yarn
 
+set -ex
+
+echo '[x] update assets...'
+
+if type yarn; then
+	yarn
+fi
 rm -rf ui/static/libs ui/static/fonts
 mkdir -p ui/static/libs
 mkdir -p ui/static/fonts
