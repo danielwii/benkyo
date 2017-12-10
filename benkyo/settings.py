@@ -30,7 +30,7 @@ SECRET_KEY = 'owhuh8p&87i6-y9b0fq)z000!66dma-qenmc3w_wmskom#h%ku'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -196,5 +196,3 @@ if DEBUG:
     # ----------------------------------------------------------------
 
     INSTALLED_APPS += ['django_extensions']
-else:
-    ALLOWED_HOSTS += ['*']
