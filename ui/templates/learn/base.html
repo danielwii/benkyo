@@ -1,0 +1,10 @@
+{% extends 'layout/default.html' %}
+
+{% load staticfiles %}
+{% load compress %}
+
+{% block css %}
+  {% compress css %}
+    <link rel="stylesheet" type="text/x-scss" href="{% static 'css/learn.scss' %}">
+  {% endcompress %}
+{% endblock %}
