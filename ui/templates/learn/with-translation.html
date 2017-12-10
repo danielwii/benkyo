@@ -6,9 +6,14 @@
   {% phonetic current.origin %}
 {% endblock %}
 
+{% block show-meaning %}
+{% endblock %}
+
 {% block translation %}
-  <p>
-    <span class="tag is-dark">{% characteristic current.origin.characteristic %}</span>
-    {{ current.origin.meaning }}
-  </p>
+  <div class="card-content">
+    <p>
+      <span class="tag is-dark">{% characteristic current.origin.characteristic %}</span>
+      {{ current.origin.meaning }}
+    </p>
+  </div>
 {% endblock %}

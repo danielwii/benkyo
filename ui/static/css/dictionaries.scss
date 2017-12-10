@@ -1,0 +1,30 @@
+.dictionaries {
+  .card {
+    border-radius: 3px;
+    .none-meaning {
+      padding: 0;
+      a {
+        width: 100%;
+        height: 100%;
+        padding: 3rem 1.5rem;
+      }
+    }
+  }
+}
+
+.functions {
+  .container {
+    position: fixed;
+    bottom: 3.25rem;
+    left: 0;
+    right: 0;
+    margin: auto;
+    .next-step {
+      a {
+        padding: 3rem;
+        height: 100%;
+        width: 100%;
+      }
+    }
+  }
+}

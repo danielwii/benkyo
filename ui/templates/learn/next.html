@@ -7,15 +7,18 @@
 {% endblock %}
 
 {% block translation %}
-  <p>
-    <span class="tag is-dark">{% characteristic current.origin.characteristic %}</span>
-    {{ current.origin.meaning }}
-  </p>
+  <div class="card-content">
+    <p>
+      <span class="tag is-dark">{% characteristic current.origin.characteristic %}</span>
+      {{ current.origin.meaning }}
+    </p>
+  </div>
 {% endblock %}
 
-{% block functions %}
-  <p>
+{% block next-step %}
+  <hr>
+  <div class="next-step">
     <a class="button is-primary is-rounded"
        href="{% url 'ui:learn' %}">next</a>
-  </p>
+  </div>
 {% endblock %}
