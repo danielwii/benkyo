@@ -16,7 +16,7 @@ import environ
 from logzero import logger
 
 environ.Env.read_env()
-env = environ.Env(DEBUG=(bool, False), )
+env = environ.Env(DEBUG=(bool, False), DB_MODE=(str, 'remote'))
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -84,7 +84,7 @@ WSGI_APPLICATION = 'benkyo.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
-if DEBUG:
+if env('DB_MODE') == 'local':
     logger.info('setup sqlite3 db connection.')
     DATABASES = {
         'default': {
@@ -197,4 +197,4 @@ if DEBUG:
 
     INSTALLED_APPS += ['django_extensions']
 else:
-    ALLOWED_HOSTS += ['0.0.0.0']
+    ALLOWED_HOSTS += ['*']
