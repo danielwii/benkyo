@@ -13,8 +13,8 @@ RUN pipenv install --system
 COPY bin /app/bin
 
 RUN npm install
-RUN chmod +x bin/update_assets.sh && bin/update_assets.sh
-
+RUN chmod +x bin/update_assets.sh
+RUN bin/update_assets.sh
 
 COPY . /app
 
