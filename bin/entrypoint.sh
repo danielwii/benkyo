@@ -1,7 +1,10 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
-set -e
+#set -e
 
 python manage.py migrate
+python manage.py load_chapters
+
+echo $@
 
 exec "$@"
