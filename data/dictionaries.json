@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "新标日初级上",
+    "chapters": [
+      { "name": "Lesson 1" },
+      { "name": "Lesson 2" },
+      { "name": "Lesson 3" },
+      { "name": "Lesson 4" },
+      { "name": "Lesson 5" },
+      { "name": "Lesson 6" },
+      { "name": "Lesson 7" },
+      { "name": "Lesson 8" },
+      { "name": "Lesson 9" },
+      { "name": "Lesson 10" },
+      { "name": "Lesson 11" },
+      { "name": "Lesson 12" },
+      { "name": "Lesson 13" },
+      { "name": "Lesson 14" },
+      { "name": "Lesson 15" },
+      { "name": "Lesson 16" },
+      { "name": "Lesson 17" },
+      { "name": "Lesson 18" },
+      { "name": "Lesson 19" },
+      { "name": "Lesson 20" },
+      { "name": "Lesson 21" },
+      { "name": "Lesson 22" },
+      { "name": "Lesson 23" },
+      { "name": "Lesson 24" }
+    ]
+  }
+]
