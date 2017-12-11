@@ -65,15 +65,15 @@ def calc_ranks(ranks: int, choice: int, first: bool = False) -> tuple:
 
     if first:
         _ranks = {
-            0: lambda x: 0,
-            1: lambda x: 5,
-            2: lambda x: 10,
+            0: lambda x: -5,
+            1: lambda x: 0,
+            2: lambda x: 5,
             3: lambda x: 45,
             4: lambda x: 60,
         }[choice](ranks)
     else:
         _ranks = {
-            0: lambda x: 0,
+            0: lambda x: -5,
             1: lambda x: x - 10,
             2: lambda x: x - 5,
             3: lambda x: x + 5,
