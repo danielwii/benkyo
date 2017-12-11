@@ -130,5 +130,5 @@ class SelectedWord(BaseModel):
     last_wrong_at = models.DateTimeField(null=True, verbose_name='最后错误时间')
     mem_level = models.IntegerField(default=0, verbose_name='记忆阶段')
 
-    origin = models.OneToOneField(Word, primary_key=True, on_delete=models.CASCADE, verbose_name='原词')
+    origin = models.OneToOneField(Word, on_delete=models.CASCADE, verbose_name='原词')
     owner = models.ForeignKey(Profile, related_name='selected_words', on_delete=models.CASCADE, verbose_name='所属')

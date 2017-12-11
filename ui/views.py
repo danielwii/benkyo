@@ -9,6 +9,7 @@ from django.db.models import Count, Q
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
+from logzero import logger
 
 from core.mem_curve import Ranks
 from dictionaries import models, services
@@ -159,8 +160,8 @@ def chapter_add_words(request, chapter_id, context=None):
     for word in chapter.words.all():
         try:
             user.profile.selected_words.create(origin=word)
-        except django.db.utils.IntegrityError:
-            pass
+        except django.db.utils.IntegrityError as e:
+            logger.exception(e)
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
