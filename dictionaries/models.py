@@ -125,6 +125,8 @@ class SelectedWord(BaseModel):
     correct_times = models.IntegerField(default=0, verbose_name='正确次数')
     wrong_times = models.IntegerField(default=0, verbose_name='错误次数')
     review_times = models.IntegerField(default=0, verbose_name='复习次数')
+
+    last_review_times_needed = models.IntegerField(default=0, verbose_name='最后所需 Review 次数')
     last_checked_at = models.DateTimeField(null=True, verbose_name='最后记忆时间')
     next_check_point = models.DateTimeField(null=True, verbose_name='下次检查点')
     last_wrong_at = models.DateTimeField(null=True, verbose_name='最后错误时间')
