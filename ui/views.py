@@ -168,11 +168,8 @@ def chapter_add_words(request, chapter_id, context=None):
 
 @with_logged_context
 def learn_index(request, context=None):
-    # 1. ranks < 10
-    # _left_words = left_words(request).count()
     current = left_words(request).all()[randint(0, context[LEFT_WORDS] - 1)]
     context.update({
-        # 'left_words': _left_words,
         'current': current,
     })
     return render(request, 'learn/index.html', context)
@@ -180,31 +177,30 @@ def learn_index(request, context=None):
 
 @with_logged_context
 def learn_word_with_translation(request, selected_word_id, context=None):
-    # 1. ranks < 10
-    # _left_words = left_words(request).count()
-    current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
+    current = models.SelectedWord.objects.get(owner=request.user.profile, origin=selected_word_id)
     context.update({
-        # 'left_words': _left_words,
         'current': current,
+        'with_translation': True
     })
     return render(request, 'learn/with-translation.html', context)
 
 
 @with_logged_context
 def learn_word(request, selected_word_id, context=None):
-    current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
+    current = models.SelectedWord.objects.get(owner=request.user.profile, origin=selected_word_id)
     if request.POST:
         choice = request.POST['choice']
         services.learn_word(current, int(choice))
-    return redirect('next/')
+    if request.POST['with-translation'] == str(True):
+        return redirect('ui:learn')
+    else:
+        return redirect('ui:learn-next', selected_word_id=selected_word_id)
 
 
 @with_logged_context
 def learn_next(request, selected_word_id, context=None):
-    # _left_words = left_words(request).count()
-    current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
+    current = models.SelectedWord.objects.get(owner=request.user.profile, origin=selected_word_id)
     context.update({
-        # 'left_words': _left_words,
         'current': current,
     })
     return render(request, 'learn/next.html', context)

@@ -41,6 +41,7 @@
       {% block functions %}
         <form action="{% url 'ui:learn-word' selected_word_id=current.origin_id %}" method="post">
           {% csrf_token %}
+          <input type="hidden" name="with-translation" value="{{ with_translation }}">
           {% if current.review_times %}
             <div class="buttons has-addons is-centered">
               <button type="submit" name="choice" value="1" class="button">不记得</button>

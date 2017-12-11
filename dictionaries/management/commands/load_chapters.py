@@ -159,6 +159,7 @@ def load_chapters(chapter_file: str = None):
                 kana, kanji = extract_word(parts[0])
                 logger.info('kana is [%s], kanji is [%s]', kana, kanji)
 
+                meaning = ''
                 if len(parts) is 2:
                     characteristic = extract_characteristic()
                     meaning = parts[-1]
