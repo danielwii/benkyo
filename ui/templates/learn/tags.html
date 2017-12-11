@@ -19,13 +19,13 @@
   </div>
   <div class="control">
     <div class="tags has-addons">
-      <span class="tag is-dark">level</span>
+      <span class="tag is-dark">lv</span>
       <span class="tag is-black">{{ current.mem_level }}</span>
     </div>
   </div>
   <div class="control">
     <div class="tags has-addons">
-      <span class="tag is-dark">ranks</span>
+      <span class="tag is-dark">R</span>
       <span class="tag is-primary">{{ current.ranks }}</span>
     </div>
   </div>
@@ -45,6 +45,13 @@
     <div class="tags has-addons">
       <span class="tag is-dark">review</span>
       <span class="tag is-light">{{ current.review_times }}</span>
+    </div>
+  </div>
+  <div class="control">
+    <div class="tags has-addons">
+      <span class="tag is-dark {% if current.last_review_times_needed %}color-red{% endif %}">
+        {{ current.last_review_times_needed }}
+      </span>
     </div>
   </div>
   <div class="control">
