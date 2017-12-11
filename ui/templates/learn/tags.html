@@ -1,13 +1,13 @@
 {% load humanize %}
 
 <div class="field is-grouped is-grouped-multiline">
-  <div class="control">
+  <div class="control is-hidden">
     <div class="tags has-addons">
       <span class="tag is-dark">left</span>
       <span class="tag is-link">{{ left_words }}</span>
     </div>
   </div>
-  <div class="control">
+  <div class="control is-hidden">
     <div class="tags has-addons">
       <span class="tag is-dark">new</span>
       {% if not current.review_times %}
@@ -49,7 +49,7 @@
   </div>
   <div class="control">
     <div class="tags has-addons">
-      <span class="tag is-dark">last checked</span>
+      <span class="tag is-dark">last</span>
       <span class="tag is-white">{{ current.last_checked_at|naturaltime }}</span>
     </div>
   </div>

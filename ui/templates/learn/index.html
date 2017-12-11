@@ -5,9 +5,8 @@
 {% block content %}
   <section class="dictionaries">
     <div class="container">
-      <div style="text-align: center">
+      <div style="text-align: center; padding: 1rem;">
         {% include 'learn/tags.html' %}
-        <hr>
         <div class="columns">
           <div class="column is-half is-offset-one-quarter">
             <div class="card">
@@ -34,14 +33,12 @@
   <section class="functions">
     <div class="container">
       {% block next-step %}
-        <hr>
         <div class="next-step">
           <a class="button is-primary is-rounded"
              href="{% url 'ui:learn-word-with-translation' selected_word_id=current.origin_id %}">?</a>
         </div>
       {% endblock %}
       {% block functions %}
-        <hr>
         <form action="{% url 'ui:learn-word' selected_word_id=current.origin_id %}" method="post">
           {% csrf_token %}
           {% if current.review_times %}
