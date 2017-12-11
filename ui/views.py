@@ -34,11 +34,15 @@ def with_logged_context(func):
 LEFT_FILTER = Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | \
               Q(next_check_point__isnull=True) | \
               Q(next_check_point__lte=timezone.now())
+LT_100_FILTER = Q(ranks__lt=Ranks.TOP)
 
 
 def left_words(request):
     if request.user.is_authenticated:
-        return models.SelectedWord.objects.filter(owner=request.user.profile).filter(LEFT_FILTER)
+        return models.SelectedWord.objects \
+            .filter(owner=request.user.profile, ignored=False) \
+            .filter(LEFT_FILTER) \
+            .filter(LT_100_FILTER)
 
 
 @with_logged_context
@@ -177,21 +181,22 @@ def learn_index(request, context=None):
 
 @with_logged_context
 def learn_word_with_translation(request, selected_word_id, context=None):
-    current = models.SelectedWord.objects.get(owner=request.user.profile, origin=selected_word_id)
+    current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
     context.update({
         'current': current,
-        'with_translation': True
+        'with_translation': True,
     })
     return render(request, 'learn/with-translation.html', context)
 
 
 @with_logged_context
 def learn_word(request, selected_word_id, context=None):
-    current = models.SelectedWord.objects.get(owner=request.user.profile, origin=selected_word_id)
+    current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
     if request.POST:
         choice = request.POST['choice']
         services.learn_word(current, int(choice))
-    if request.POST['with-translation'] == str(True):
+
+    if request.POST['with-translation'] == str(True) or request.POST['is-next'] == str(True):
         return redirect('ui:learn')
     else:
         return redirect('ui:learn-next', selected_word_id=selected_word_id)
@@ -199,8 +204,17 @@ def learn_word(request, selected_word_id, context=None):
 
 @with_logged_context
 def learn_next(request, selected_word_id, context=None):
-    current = models.SelectedWord.objects.get(owner=request.user.profile, origin=selected_word_id)
+    current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
     context.update({
         'current': current,
+        'is_next': True,
     })
     return render(request, 'learn/next.html', context)
+
+
+@with_logged_context
+def learn_ignore(request, selected_word_id, context=None):
+    current = get_object_or_404(models.SelectedWord, pk=selected_word_id)
+    current.ignored = True
+    current.save()
+    return redirect('ui:learn')

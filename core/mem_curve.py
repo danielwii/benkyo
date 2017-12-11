@@ -22,6 +22,7 @@ from django.utils import timezone
 
 class Ranks:
     NOT_REMEMBER_TOTALLY = 10
+    TOP = 100
 
 
 def next_check_point(dt: timezone, level: int):
@@ -72,11 +73,11 @@ def calc_ranks(ranks: int, choice: int, first: bool = False) -> tuple:
         }[choice](ranks)
     else:
         _ranks = {
-            # 0: lambda x: 0,
+            0: lambda x: 0,
             1: lambda x: x - 10,
             2: lambda x: x - 5,
             3: lambda x: x + 5,
-            # 4: lambda x: 60,
+            4: lambda x: x + 15,
         }[choice](ranks)
 
     if _ranks < 0:

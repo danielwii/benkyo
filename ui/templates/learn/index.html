@@ -23,7 +23,8 @@
                   {% endblock %}
                 </div>
               </div>
-              {% block translation %}{% endblock %}
+              {% block translation %}
+              {% endblock %}
             </div>
           </div>
         </div>
@@ -35,20 +36,21 @@
       {% block next-step %}
         <div class="next-step">
           <a class="button is-primary is-rounded"
-             href="{% url 'ui:learn-word-with-translation' selected_word_id=current.origin_id %}">?</a>
+             href="{% url 'ui:learn-word-with-translation' selected_word_id=current.id %}">?</a>
         </div>
       {% endblock %}
       {% block functions %}
-        <form action="{% url 'ui:learn-word' selected_word_id=current.origin_id %}" method="post">
+        <form action="{% url 'ui:learn-word' selected_word_id=current.id %}" method="post">
           {% csrf_token %}
           <input type="hidden" name="with-translation" value="{{ with_translation }}">
-          {% if current.review_times %}
-            <div class="buttons has-addons is-centered">
-              <button type="submit" name="choice" value="1" class="button">不记得</button>
-              <button type="submit" name="choice" value="2" class="button">模糊</button>
-              <button type="submit" name="choice" value="3" class="button">记得</button>
-            </div>
-          {% else %}
+          <input type="hidden" name="is-next" value="{{ is_next }}">
+{#          {% if current.review_times %}#}
+{#            <div class="buttons has-addons is-centered">#}
+{#              <button type="submit" name="choice" value="1" class="button">不记得</button>#}
+{#              <button type="submit" name="choice" value="2" class="button">模糊</button>#}
+{#              <button type="submit" name="choice" value="3" class="button">记得</button>#}
+{#            </div>#}
+{#          {% else %}#}
             <div class="buttons has-addons is-centered">
               <button type="submit" name="choice" value="0" class="button">完全不认识</button>
               <button type="submit" name="choice" value="1" class="button">不记得</button>
@@ -56,7 +58,7 @@
               <button type="submit" name="choice" value="3" class="button">记得</button>
               <button type="submit" name="choice" value="4" class="button">熟悉</button>
             </div>
-          {% endif %}
+{#          {% endif %}#}
         </form>
       {% endblock %}
       <hr>

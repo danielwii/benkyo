@@ -59,6 +59,7 @@ def insert_word(file: str, kana: str, kanji: str, characteristic: str, meaning: 
         word = word_filter.get()
         logger.info('Update kana=%s, kanji=%s, marking=%s, characteristic=%s, meaning=%s',
                     kana, kanji, marking, characteristic, meaning)
+        word.kanji = kanji
         word.characteristic = characteristic
         word.marking = marking
         word.meaning = meaning
@@ -75,8 +76,8 @@ def insert_word(file: str, kana: str, kanji: str, characteristic: str, meaning: 
             chapter = chapter_filter.get()
             logger.info('Chapter [%s] already exists.', chapter)
             word = models.Word.objects.create(
-                chapter=chapter, kana=kana, kanji=kanji, marking=marking, characteristic=characteristic,
-                meaning=meaning)
+                chapter=chapter, kana=kana, kanji=kanji, marking=marking,
+                characteristic=characteristic, meaning=meaning)
             logger.info('Created!')
         else:
             raise RuntimeError('Chapter [%s-%s] not exist, init it first...' % (dictionary_id, chapter_num))

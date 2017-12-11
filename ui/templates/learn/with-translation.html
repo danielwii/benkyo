@@ -11,6 +11,9 @@
 
 {% block translation %}
   <div class="card-content">
+    <div style="text-align: right; margin: -1.5rem -1.5rem 0 0;">
+      <a class="button is-text ignore" onclick="return confirm('ignore this word in list?');" href="{% url 'ui:learn-ignore' selected_word_id=current.id %}">ignore</a>
+    </div>
     <p>
       <span class="tag is-dark">{% characteristic current.origin.characteristic %}</span>
       {{ current.origin.meaning }}
