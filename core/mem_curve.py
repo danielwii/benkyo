@@ -2,17 +2,15 @@
 
 # --------------------------------
 # 记忆核心
-# [[短期记忆]]（针对于不熟悉的单词）
-#   :: 应用于初次记忆且不熟悉的单词
 #   0   -> 5  min   : [ 0 ~ 10)
 #   1   -> 30 min   : [10 ~ 20)
 #   2   -> 9  hour  : [20 ~ 30)
-# [[长期记忆]]
-#   0,2 -> 1  day   : [30 ~ 45)
-#   3   -> 2  day   : [45 ~ 60)
-#   4   -> 4  day   : [60 ~ 75)
-#   5   -> 7  day   : [75 ~ 90)
-#   6   -> 15 day   : [90 ~
+#
+#   3   -> 1  day   : [30 ~ 45)
+#   4   -> 2  day   : [45 ~ 60)
+#   5   -> 4  day   : [60 ~ 75)
+#   6   -> 7  day   : [75 ~ 90)
+#   7   -> 15 day   : [90 ~
 # --------------------------------
 
 import math
@@ -85,5 +83,5 @@ def calc_ranks(ranks: int, choice: int, first: bool = False) -> tuple:
     elif _ranks < 30:
         _level = int(_ranks / 10)
     else:
-        _level = math.floor(_ranks / 15)
+        _level = math.floor(_ranks / 15) + 1
     return _level, _ranks
