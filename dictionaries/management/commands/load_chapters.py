@@ -121,7 +121,7 @@ def init_dictionaries():
 def clean_chapter(file, loaded_words):
     _, _, chapter_filter = chapter_filter_by_filename(file)
     for word_in_db in chapter_filter.get().words.values('id', 'kana', 'kanji', 'meaning').all():
-        # logger.info('word in db is %s', word_in_db)
+        logger.info('word in db is %s', word_in_db)
         exists = len(list(filter(
             lambda word: word.kana == word_in_db['kana'] and
                          word.kanji == word_in_db['kanji'] and

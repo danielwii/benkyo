@@ -31,10 +31,11 @@ def next_check_point(dt: timezone, level: int):
             0: 5,
             1: 30,
             2: 9 * 60,
-            3: 2 * 24 * 60,
-            4: 4 * 24 * 60,
-            5: 7 * 24 * 60,
-            6: 15 * 24 * 60,
+            3: 1 * 24 * 60,
+            4: 2 * 24 * 60,
+            5: 4 * 24 * 60,
+            6: 7 * 24 * 60,
+            7: 15 * 24 * 60,
         }[level]
         return dt + timezone.timedelta(minutes=minutes)
     else:
