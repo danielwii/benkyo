@@ -3,7 +3,6 @@ import json
 import re
 from os import listdir, path
 from os.path import isfile, join
-from time import sleep
 
 from django.core.management import BaseCommand
 from logzero import logger
@@ -43,13 +42,14 @@ def insert_word(file: str, kana: str, kanji: str, characteristic: str, meaning: 
     if not kanji and not meaning:
         logger.warn('No meaning for %s' % kana)
 
-    word_filter = models.Word.objects.filter(kana=kana)
+    dictionary_id, chapter_num, chapter_filter = chapter_filter_by_filename(file)
+
+    word_filter = models.Word.objects.filter(kana=kana, chapter=chapter_filter.get())
 
     # Words may have same kana and different kanji,
     # so check the meaning but not kanji when the kanji has '~' included
-    if '～' in kanji:
-        word_filter = word_filter.filter(meaning=meaning)
-    elif word_filter.count() > 1:
+    word_filter = word_filter.filter(meaning=meaning)
+    if word_filter.count() > 1:
         word_filter = word_filter.filter(kanji=kanji)
 
     marking = ''
@@ -66,8 +66,7 @@ def insert_word(file: str, kana: str, kanji: str, characteristic: str, meaning: 
         word.meaning = meaning
         word.save()
     else:
-        dictionary_id, chapter_num, chapter_filter = chapter_filter_by_filename(file)
-        # dictionary_id, chapter_num = re.search(r'(.*)-(.*)\..*', file).groups()
+        # dictionary_id, chapter_num, chapter_filter = chapter_filter_by_filename(file)
         # logger.info('Dictionary ID is [%s], chapter number is [%s]', dictionary_id, chapter_num)
         logger.info('Insert kana=%s, kanji=%s, marking=%s, characteristic=%s, meaning=%s',
                     kana, kanji, marking, characteristic, meaning)
@@ -147,9 +146,9 @@ def load_chapters(chapter_file: str = None):
 
     for file in all_files:
         logger.info('Try to load file: %s', file)
+        loaded_words = []
         with open(path.join(search_path, file), 'r') as f:
             index = 0
-            loaded_words = []
             f_lines = f.readlines()
             for line in f_lines:
                 index += 1
