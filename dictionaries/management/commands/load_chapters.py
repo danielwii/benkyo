@@ -145,12 +145,11 @@ def load_chapters(chapter_file: str = None):
     if chapter_file:
         all_files = [f for f in all_files if f == '%s.txt' % chapter_file]
 
-    loaded_words = []
-
     for file in all_files:
         logger.info('Try to load file: %s', file)
         with open(path.join(search_path, file), 'r') as f:
             index = 0
+            loaded_words = []
             f_lines = f.readlines()
             for line in f_lines:
                 index += 1
@@ -178,8 +177,6 @@ def load_chapters(chapter_file: str = None):
                 logger.info('----------------------------------------------------')
 
         clean_chapter(file, loaded_words)
-        logger.info('waiting for 3s...')
-        sleep(3)
 
 
 class Command(BaseCommand):
