@@ -34,7 +34,7 @@ def with_logged_context(func):
 LEFT_FILTER = Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | \
               Q(next_check_point__isnull=True) | \
               Q(next_check_point__lte=timezone.now())
-LT_100_FILTER = Q(ranks__lt=Ranks.TOP)
+LT_100_FILTER = Q(ranks__lte=Ranks.TOP)
 
 
 def left_words(request):
