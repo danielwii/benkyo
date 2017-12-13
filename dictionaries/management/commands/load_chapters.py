@@ -3,6 +3,7 @@ import json
 import re
 from os import listdir, path
 from os.path import isfile, join
+from time import sleep
 
 from django.core.management import BaseCommand
 from logzero import logger
@@ -177,6 +178,8 @@ def load_chapters(chapter_file: str = None):
                 logger.info('----------------------------------------------------')
 
         clean_chapter(file, loaded_words)
+        logger.info('waiting for 3s...')
+        sleep(3)
 
 
 class Command(BaseCommand):
