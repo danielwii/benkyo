@@ -24,7 +24,8 @@ def with_logged_context(func):
     def __decorator(*args, **kwargs):
         context = {
             'view_name': args[0].resolver_match.view_name,
-            'left_words': left_words(args[0]).count() if left_words(args[0]) else 0,
+            'left_words': left_words_count(args[0]),
+            'sys_time': timezone.now(),
         }
         return func(*args, **kwargs, context=context)
 
@@ -43,6 +44,20 @@ def left_words(request):
             .filter(owner=request.user.profile, ignored=False) \
             .filter(LEFT_FILTER) \
             .filter(LT_100_FILTER)
+
+
+def left_words_count(request):
+    if request.user.is_authenticated:
+        return left_words(request).count()
+    else:
+        return 0
+
+
+def random_word_from_left(request, learning_words_count):
+    if learning_words_count < 1:
+        return None
+    else:
+        return left_words(request).all()[randint(0, learning_words_count - 1)]
 
 
 @with_logged_context
@@ -172,7 +187,7 @@ def chapter_add_words(request, chapter_id, context=None):
 
 @with_logged_context
 def learn_index(request, context=None):
-    current = left_words(request).all()[randint(0, context[LEFT_WORDS] - 1)]
+    current = random_word_from_left(request, context[LEFT_WORDS])
     context.update({
         'current': current,
     })
