@@ -32,9 +32,12 @@ def with_logged_context(func):
     return __decorator
 
 
-LEFT_FILTER = Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | \
-              Q(next_check_point__isnull=True) | \
-              Q(next_check_point__lte=timezone.now())
+def generate_left_filter():
+    return Q(ranks__lt=Ranks.NOT_REMEMBER_TOTALLY) | \
+           Q(next_check_point__isnull=True) | \
+           Q(next_check_point__lte=timezone.now())
+
+
 LT_100_FILTER = Q(ranks__lte=Ranks.TOP)
 
 
@@ -42,7 +45,7 @@ def left_words(request):
     if request.user.is_authenticated:
         return models.SelectedWord.objects \
             .filter(owner=request.user.profile, ignored=False) \
-            .filter(LEFT_FILTER) \
+            .filter(generate_left_filter()) \
             .filter(LT_100_FILTER)
 
 
