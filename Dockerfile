@@ -8,7 +8,7 @@ RUN pip install pipenv --upgrade
 COPY Pipfile Pipfile.lock package.json /app/
 WORKDIR /app
 
-RUN pipenv install --system
+RUN pipenv install --system --dev
 
 COPY bin /app/bin
 

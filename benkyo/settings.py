@@ -179,7 +179,7 @@ if DEBUG:
     # DebugTool Settings
     # ----------------------------------------------------------------
 
-    INTERNAL_IPS = ['127.0.0.1']
+    INTERNAL_IPS = ['127.0.0.1', '45.32.175.214']
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
 
